@@ -6,9 +6,9 @@ import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.os.Build
 import com.rosan.installer.data.app.util.SignatureUtils
-import com.rosan.installer.util.compatVersionCode
 import com.rosan.installer.util.hasFlag
-import com.rosan.installer.util.isPackageArchivedCompat
+import com.rosan.installer.util.pm.compatVersionCode
+import com.rosan.installer.util.pm.isPackageArchivedCompat
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import java.io.File
@@ -26,7 +26,8 @@ data class InstalledAppInfo(
     val isSystemApp: Boolean = false,
     val isUninstalled: Boolean = false,
     val isArchived: Boolean = false,
-    val packageSize: Long = 0L
+    val packageSize: Long = 0L,
+    val sourceDir: String? = null
 ) {
     companion object : KoinComponent {
         fun buildByPackageName(packageName: String): InstalledAppInfo? {
@@ -81,7 +82,8 @@ data class InstalledAppInfo(
                     isSystemApp = flags.hasFlag(ApplicationInfo.FLAG_SYSTEM),
                     isUninstalled = isUninstalled,
                     isArchived = packageManager.isPackageArchivedCompat(packageName),
-                    packageSize = packageSize
+                    packageSize = packageSize,
+                    sourceDir = applicationInfo?.sourceDir
                 )
             } catch (_: PackageManager.NameNotFoundException) {
                 // This is an expected failure, no need to print stack trace in production.
